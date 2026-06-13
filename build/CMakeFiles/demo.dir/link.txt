@@ -1,1 +1,0 @@
-/usr/bin/c++ -Wl,--dependency-file=CMakeFiles/demo.dir/link.d CMakeFiles/demo.dir/examples/demo.cpp.o -o demo  libblit.a /usr/lib64/libSDL2-2.0.so.0.3200.68

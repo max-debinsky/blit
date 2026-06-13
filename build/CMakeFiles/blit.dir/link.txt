@@ -1,2 +1,0 @@
-/usr/bin/ar qc libblit.a CMakeFiles/blit.dir/src/window.cpp.o
-/usr/bin/ranlib libblit.a

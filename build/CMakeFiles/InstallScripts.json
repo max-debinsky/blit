@@ -1,7 +1,0 @@
-{
-	"InstallScripts" : 
-	[
-		"/home/nx/Dev/blit/build/cmake_install.cmake"
-	],
-	"Parallel" : false
-}

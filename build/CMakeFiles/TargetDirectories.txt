@@ -1,4 +1,0 @@
-/home/nx/Dev/blit/build/CMakeFiles/blit.dir
-/home/nx/Dev/blit/build/CMakeFiles/demo.dir
-/home/nx/Dev/blit/build/CMakeFiles/edit_cache.dir
-/home/nx/Dev/blit/build/CMakeFiles/rebuild_cache.dir
