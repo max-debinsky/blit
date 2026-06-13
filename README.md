@@ -1,4 +1,4 @@
-# Pixel Display
+# Blit
 
 A lightweight SDL2 abstraction layer for displaying raw pixel buffers.
 
@@ -13,9 +13,16 @@ A lightweight SDL2 abstraction layer for displaying raw pixel buffers.
 ## Example
 
 ```cpp
-Display display(640, 480, "Demo");
+int main() {
+    Window window;
+    window.init(128, 128, 4, "Demo Window");
 
-while (display.running())
-{
-    display.present(framebuffer);
+    auto* px = window.pixels();  /// access to the pixel buffer
+
+    while (window.pollEvents()) {
+    
+        window.present();
+
+        window.frameLimit(60);
+    }
 }
