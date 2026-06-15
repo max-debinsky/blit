@@ -118,14 +118,10 @@ bool Window::pollEvents() {
                 break;
             }
 
-            case SDL_MOUSEMOTION: {
-                float lx, ly;
-                SDL_RenderWindowToLogical(impl->renderer,
-                    event.motion.x, event.motion.y, &lx, &ly);
-                mx = static_cast<int>(lx);
-                my = static_cast<int>(ly);
+            case SDL_MOUSEMOTION:
+                mx = event.motion.x / scale;
+                my = event.motion.y / scale;
                 break;
-            }
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP: {
                 bool down = (event.type == SDL_MOUSEBUTTONDOWN);
