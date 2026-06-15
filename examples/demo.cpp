@@ -1,5 +1,6 @@
 #include "window.hpp"
 #include <cmath>
+#include <cstring>
 
 struct vec2{
     float x,y;
@@ -9,19 +10,12 @@ struct vec3{
     float x,y,z;
 };
 
-vec2 project(vec3 vertex,
-             float fov_degrees,
-             int screen_width,
-             int screen_height,
-             float camera_z)
+vec2 project(vec3 vertex, float d, int screen_width, int screen_height, float camera_z)
 {
     float z = vertex.z + camera_z;
 
     if (z <= 0.01f)
-        return {-1, -1}; // clipped
-
-    float fov_radians = fov_degrees * (3.14159265f / 180.0f);
-    float d = 1.0f / tan(fov_radians * 0.5f);
+        return {-1, -1};
 
     float aspect = float(screen_width) / float(screen_height);
 
@@ -94,23 +88,6 @@ void drawLine(vec2 a, vec2 b,
     }
 }
 
-vec3 vertices[8] = {
-    { 1,  1,  1},
-    {-1,  1,  1},
-    { 1, -1,  1},
-    {-1, -1,  1},
-    { 1,  1, -1},
-    {-1,  1, -1},
-    { 1, -1, -1},
-    {-1, -1, -1}
-};
-
-int edges[][2] = {
-    {0,1}, {1,3}, {3,2}, {2,0}, // front face
-    {4,5}, {5,7}, {7,6}, {6,4}, // back face
-    {0,4}, {1,5}, {2,6}, {3,7}  // connecting edges
-};
-
 void rotateX(vec3* vertices, int count, float theta)
 {
     float c = cos(theta);
@@ -159,45 +136,48 @@ void rotateZ(vec3* vertices, int count, float theta)
 int main() {
     Window window;
 
+    const int width  = 128;
     const int height = 128;
-    const int width = height;
 
-    window.init(height, width, 4, "Demo Window");
+    window.init(width, height, 4, "Demo Window");
 
     auto* px = window.pixels();
 
-    rotateX(vertices, 8, 45);
+    vec3 vertices[8] = {
+        { 1,  1,  1},
+        {-1,  1,  1},
+        { 1, -1,  1},
+        {-1, -1,  1},
+        { 1,  1, -1},
+        {-1,  1, -1},
+        { 1, -1, -1},
+        {-1, -1, -1}
+    };
+
+    int edges[][2] = {
+        {0,1}, {1,3}, {3,2}, {2,0}, // front face
+        {4,5}, {5,7}, {7,6}, {6,4}, // back face
+        {0,4}, {1,5}, {2,6}, {3,7}  // connecting edges
+    };
+
+    constexpr float kDeg2Rad = 3.14159265f / 180.0f;
+    rotateX(vertices, 8, 45.0f * kDeg2Rad);
+
+    const float d = 1.0f / tanf(40.0f * kDeg2Rad * 0.5f);
 
     while (window.pollEvents()) {
-
-        for(int i = 0; i < height*width; i++){
-            px[i] = 0x0000000;
-        }
+        memset(px, 0, static_cast<size_t>(width) * height * sizeof(uint32_t));
 
         vec2 projected[8];
-        for (int i = 0; i < 8; i++) {
-            projected[i] = project(vertices[i], 40, height, width, 10);
-        }
+        for (int i = 0; i < 8; i++)
+            projected[i] = project(vertices[i], d, width, height, 10.0f);
 
         for (int i = 0; i < 12; i++) {
-            int a = edges[i][0];
-            int b = edges[i][1];
-
-            drawLine(
-                {projected[a].x,
-                projected[a].y},
-                {projected[b].x,
-                projected[b].y},
-                px,
-                height,
-                width,
-                0xFFFFFFFF
-            );
+            int a = edges[i][0], b = edges[i][1];
+            drawLine(projected[a], projected[b], px, width, height, 0xFFFFFFFF);
         }
 
-        //rotateX(vertices, 8, 0.01);
-        rotateY(vertices, 8, 0.01);
-        //rotateZ(vertices, 8, 0.01);
+        rotateY(vertices, 8, 0.01f);
 
         window.present();
 
