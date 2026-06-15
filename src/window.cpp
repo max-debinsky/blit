@@ -119,8 +119,8 @@ bool Window::pollEvents() {
             }
 
             case SDL_MOUSEMOTION:
-                mx = event.motion.x / scale;
-                my = event.motion.y / scale;
+                mx = event.motion.x;
+                my = event.motion.y;
                 break;
             case SDL_MOUSEBUTTONDOWN:
             case SDL_MOUSEBUTTONUP: {
