@@ -165,7 +165,12 @@ int main() {
 
     const float d = 1.0f / tanf(40.0f * kDeg2Rad * 0.5f);
 
+    bool paused = false;
+
     while (window.pollEvents()) {
+        if (window.isKeyPressed(Key::Escape)) break;
+        if (window.isKeyPressed(Key::Space))  paused = !paused;
+
         memset(px, 0, static_cast<size_t>(width) * height * sizeof(uint32_t));
 
         vec2 projected[8];
@@ -177,10 +182,15 @@ int main() {
             drawLine(projected[a], projected[b], px, width, height, 0xFFFFFFFF);
         }
 
-        rotateY(vertices, 8, 0.01f);
+        if (!paused)
+            rotateY(vertices, 8, 0.01f);
+
+        // draw a red dot at the mouse cursor position
+        if (window.isMouseDown(MouseButton::Left))
+            draw_pixel({(float)window.mouseX(), (float)window.mouseY()},
+                       px, width, height, 0xFFFF4444);
 
         window.present();
-
         window.frameLimit(60);
     }
 
