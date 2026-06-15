@@ -27,3 +27,11 @@ target_link_libraries(blit
 target_link_libraries(demo
     PRIVATE blit
 )
+
+add_executable(demo2
+    examples/demo2.cpp
+)
+
+target_link_libraries(demo2
+    PRIVATE blit
+)
