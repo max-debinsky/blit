@@ -20,7 +20,8 @@ bool Window::init(int w, int h, int s, const char* title) {
     scale = s;
 
     framebuffer.resize(static_cast<size_t>(width) * height);
-    std::memset(framebuffer.data(), 0, framebuffer.size() * sizeof(uint32_t));
+
+    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
     impl->window = SDL_CreateWindow(
         title,
@@ -47,8 +48,6 @@ bool Window::init(int w, int h, int s, const char* title) {
         return false;
     }
 
-    // crisp pixel scaling
-    SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
     SDL_RenderSetIntegerScale(impl->renderer, SDL_TRUE);
     SDL_RenderSetLogicalSize(impl->renderer, width, height);
 
@@ -65,6 +64,7 @@ bool Window::init(int w, int h, int s, const char* title) {
         return false;
     }
 
+    lastFrame = std::chrono::high_resolution_clock::now();
     return true;
 }
 
@@ -107,18 +107,15 @@ void Window::present() {
 }
 
 void Window::frameLimit(int fps) {
-    static auto last = std::chrono::high_resolution_clock::now();
-
     auto frameTime = std::chrono::milliseconds(1000 / fps);
     auto now = std::chrono::high_resolution_clock::now();
-
-    auto elapsed = now - last;
+    auto elapsed = now - lastFrame;
 
     if (elapsed < frameTime) {
         std::this_thread::sleep_for(frameTime - elapsed);
     }
 
-    last = std::chrono::high_resolution_clock::now();
+    lastFrame = std::chrono::high_resolution_clock::now();
 }
 
 void Window::shutdown() {
